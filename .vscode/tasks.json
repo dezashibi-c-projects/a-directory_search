@@ -1,0 +1,57 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build All (Debug)",
+            "type": "shell",
+            "command": "make",
+            "args": [],
+            "group": "build"
+        },
+        {
+            "label": "Build All (Release)",
+            "type": "shell",
+            "command": "make",
+            "args": [
+                "release"
+            ],
+            "group": "build"
+        },
+        {
+            "label": "Clean Build",
+            "type": "shell",
+            "command": "make",
+            "args": [
+                "clean"
+            ],
+            "group": "build"
+        },
+        {
+            "label": "Run",
+            "type": "shell",
+            "command": "make",
+            "args": [
+                "run"
+            ],
+            "group": "test"
+        },
+        {
+            "label": "Memcheck",
+            "type": "shell",
+            "command": "make",
+            "args": [
+                "memcheck"
+            ],
+            "group": "test"
+        },
+        {
+            "label": "Memcheck1",
+            "type": "shell",
+            "command": "make",
+            "args": [
+                "memcheck1"
+            ],
+            "group": "test"
+        }
+    ]
+}
