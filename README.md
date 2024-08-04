@@ -56,17 +56,25 @@ But that's not fun to just reuse that old buddy here without actually writing an
 
 The project is a cli tool, user pass a path and a keyword and it searches all the files in the directory in batches in `n` threads and shows the result.
 
+## Final Result and Thoughts
+
+I'm quite happy with the result, the structure of code is more or less close to the `POSIX` C code and I like that.
+
+`dirent.h` is totally match to the `POSIX` version, `CThreads` on the other hand is as close to `pthread` as it can be which is very nice.
+
+The program searches the given path with traversing over children directories and check files in batches to see if the given keyword exists in them or not and lists the file names with full path.
+
 ## Third Party Notices
 
 This project uses the following third-party libraries:
 
 ### `dirent.h` (MIT License)
 
-Please refer to [LICENSE](/dirent/LICENSE).
+Please refer to [LICENSE](/third_party/dirent/LICENSE).
 
 ### `CThreads` (BSD 2-Clause License)
 
-Please refer to [LICENSE](/CThreads/LICENSE).
+Please refer to [LICENSE](/third_party/CThreads/LICENSE).
 
 ## License
 
