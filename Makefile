@@ -14,7 +14,7 @@
 # ***************************************************************************************
 
 # Compiler to use
-CC = gcc
+CC = zig cc
 
 # Compiler flags
 DEBUGFLAGS = -g -O0
@@ -25,10 +25,10 @@ TARGET_NAME = directory_search
 # Platform Specific Settings
 ifeq ($(OS),Windows_NT)
 	TARGET_EXT = .exe
-	LDFLAGS =
+	CFLAGS +=
 else
 	TARGET_EXT =
-	LDFLAGS = -lpthread
+	CFLAGS += -lpthread
 endif
 
 # Executable name
@@ -44,13 +44,6 @@ RELEASEOBJDIR = $(OBJDIR)/release
 
 # Source files
 SRCS = $(wildcard $(SRCDIR)/*.c)
-
-# Platform Specific Settings
-ifeq ($(OS),Windows_NT)
-	SRCS +=
-else
-	SRCS +=
-endif
 
 # Object files
 DEBUGOBJS = $(patsubst $(SRCDIR)/%.c,$(DEBUGOBJDIR)/%.o,$(SRCS))
