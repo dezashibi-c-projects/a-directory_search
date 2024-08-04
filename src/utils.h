@@ -19,6 +19,16 @@
 #include <stdbool.h>
 #include <stdio.h>
 
+/**
+ * @brief checks whether the file contains the given word or not
+ *
+ * It returns as soon as it finds the first occurrence of the word
+ *
+ * @param file FILE* pointer to the file
+ * @param word the word to search in file for
+ *
+ * @return true or false if it finds the word in the given file stream
+ */
 bool file_contains_word(FILE* file, const char* word);
 
 #endif // UTILS__H__
