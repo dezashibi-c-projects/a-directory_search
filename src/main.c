@@ -49,7 +49,10 @@ typedef struct
     const char* keyword;
 } ThreadData;
 
-struct cthreads_mutex mutex;
+struct cthreads_thread threads[MAX_THREADS];
+struct cthreads_args thread_args[MAX_THREADS];
+ThreadData* data_pool[MAX_THREADS];
+int thread_count = 0;
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 /////// FUNCTIONS
@@ -66,8 +69,6 @@ void* search_in_file_thread(void* arg)
 {
     ThreadData* data = arg; // cast arg to ThreadData*
 
-    // lock the thread to access the data
-    cthreads_mutex_lock(&mutex);
     FILE* file = fopen(data->file_path, "r");
     if (!file)
     {
@@ -79,12 +80,24 @@ void* search_in_file_thread(void* arg)
     {
         printf("Found keyword in file: %s\n", data->file_path);
     }
-    cthreads_mutex_unlock(&mutex); // finished, unlock the thread
 
-    free(data);   // free the data
     fclose(file); // close the file
 
     return NULL;
+}
+
+/**
+ * @brief Joins all the threads and frees used data then resets the count
+ */
+void join_threads_and_reset(void)
+{
+    for (int i = 0; i < thread_count; ++i)
+    {
+        cthreads_thread_join(threads[i], NULL);
+        free(data_pool[i]);
+    }
+
+    thread_count = 0;
 }
 
 /**
@@ -105,11 +118,6 @@ void search_in_directory(const char* dirpath, const char* keyword)
         fprintf(stderr, "'opendir' call error for directory '%s' in 'search_in_directory' from '%s':%d\n", dirpath, __FILE__, (__LINE__ - 3));
         return;
     }
-
-    struct cthreads_thread threads[MAX_THREADS];
-    struct cthreads_args thread_args[MAX_THREADS];
-
-    int thread_count = 0;
 
     /**
      * We traverse in the current directory and all the children directories
@@ -139,37 +147,29 @@ void search_in_directory(const char* dirpath, const char* keyword)
             }
             else
             {
-                ThreadData* data = malloc(sizeof(ThreadData));
-                strncpy(data->file_path, path, PATH_MAX);
-                data->keyword = keyword;
+                data_pool[thread_count] = (ThreadData*)malloc(sizeof(ThreadData));
+                strncpy(data_pool[thread_count]->file_path, path, PATH_MAX);
+                data_pool[thread_count]->keyword = keyword;
 
                 // create new thread and increment thread_count by one
-                if (cthreads_thread_create(&threads[thread_count++], NULL, search_in_file_thread, data, &thread_args[thread_count]) != 0)
+                if (cthreads_thread_create(&threads[thread_count], NULL, search_in_file_thread, data_pool[thread_count], &thread_args[thread_count]) != 0)
                 {
                     fprintf(stderr, "'cthreads_thread_create' call error in 'search_in_directory' from '%s':%d\n", __FILE__, (__LINE__ - 2));
                 }
 
+                ++thread_count;
+
                 // wait for the threads to join and reset the thread_count
                 if (thread_count >= MAX_THREADS)
-                {
-                    for (int i = 0; i < thread_count; ++i)
-                    {
-                        cthreads_thread_join(threads[i], NULL);
-                    }
-
-                    thread_count = 0;
-                }
+                    join_threads_and_reset();
             }
         }
     }
 
     closedir(d);
 
-    // wait for the remained thread to join
-    for (int i = 0; i < thread_count; ++i)
-    {
-        cthreads_thread_join(threads[i], NULL);
-    }
+    // wait for the remained thread to join and reset the thread_count
+    join_threads_and_reset();
 }
 
 int main(int argc, char* argv[])
@@ -183,11 +183,7 @@ int main(int argc, char* argv[])
     const char* dirpath = argv[1];
     const char* keyword = argv[2];
 
-    cthreads_mutex_init(&mutex, NULL);
-
     search_in_directory(dirpath, keyword);
-
-    cthreads_mutex_destroy(&mutex);
 
     return 0;
 }
