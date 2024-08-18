@@ -14,7 +14,7 @@
 # ***************************************************************************************
 
 # Compiler to use
-CC = zig cc
+CC = gcc
 
 # Compiler flags
 DEBUGFLAGS = -g -O0
