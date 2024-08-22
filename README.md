@@ -1,6 +1,6 @@
 # Multi Threaded Directory Search in C
 
-Using Multi-threading and directory traversing in a cross platform way, using third party libraries, yes or no.
+Using Multi-threading and directory traversing in a cross platform way.
 
 ## Introduction
 
@@ -13,8 +13,6 @@ Generally on Windows we're supposed to use `windows.h` and `CreateThread` and ot
 Well, `gcc` on windows "supports" using `pthread` but you need to use `gcc` compiler which is totally fine and also worth mentioning here that we still need to use `-lpthread` flag while compiling our program.
 
 To achieve that I'm going to use my own multi threading library known as [DThreads](https://github.com/dezashibi-c/dthreads).
-
-**Though I could split files into two "_windows.c" and "_posix.c" files to create a more readable implementation and maintainable but honestly it's still readable.**
 
 ### Accessing Directory in Windows and `POSIX` systems
 
