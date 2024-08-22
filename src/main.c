@@ -13,7 +13,8 @@
 // *  Description: Read the readme file for more information
 // ***************************************************************************************
 
-#include "cthreads.h"
+#define DTHREAD_IMPL
+#include "../dthreads/dthread.h"
 
 #if defined(_WIN32) || defined(_WIN64)
 #include "dirent.h"
@@ -49,8 +50,7 @@ typedef struct
     const char* keyword;
 } ThreadData;
 
-struct cthreads_thread threads[MAX_THREADS];
-struct cthreads_args thread_args[MAX_THREADS];
+DThread threads[MAX_THREADS];
 ThreadData* data_pool[MAX_THREADS];
 int thread_count = 0;
 
@@ -65,20 +65,20 @@ int thread_count = 0;
  *
  * @param arg a void* to the ThreadData
  */
-void* search_in_file_thread(void* arg)
+dthread_define_routine(search_in_file_thread)
 {
-    ThreadData* data = arg; // cast arg to ThreadData*
+    ThreadData* thread_data = data; // cast data to ThreadData*
 
-    FILE* file = fopen(data->file_path, "r");
+    FILE* file = fopen(thread_data->file_path, "r");
     if (!file)
     {
-        fprintf(stderr, "'fopen' call error for file '%s' in 'search_in_file_thread' from '%s':%d\n", data->file_path, __FILE__, (__LINE__ - 3));
+        fprintf(stderr, "'fopen' call error for file '%s' in 'search_in_file_thread' from '%s':%d\n", thread_data->file_path, __FILE__, (__LINE__ - 3));
         return NULL;
     }
 
-    if (file_contains_word(file, data->keyword))
+    if (file_contains_word(file, thread_data->keyword))
     {
-        printf("Found keyword in file: %s\n", data->file_path);
+        printf("Found keyword in file: %s\n", thread_data->file_path);
     }
 
     fclose(file); // close the file
@@ -93,7 +93,7 @@ void join_threads_and_reset(void)
 {
     for (int i = 0; i < thread_count; ++i)
     {
-        cthreads_thread_join(threads[i], NULL);
+        dthread_join(&threads[i]);
         free(data_pool[i]);
     }
 
@@ -152,9 +152,10 @@ void search_in_directory(const char* dirpath, const char* keyword)
                 data_pool[thread_count]->keyword = keyword;
 
                 // create new thread and increment thread_count by one
-                if (cthreads_thread_create(&threads[thread_count], NULL, search_in_file_thread, data_pool[thread_count], &thread_args[thread_count]) != 0)
+                threads[thread_count] = dthread_init_thread(search_in_file_thread, data_pool[thread_count]);
+                if (dthread_create(&threads[thread_count], NULL) != 0)
                 {
-                    fprintf(stderr, "'cthreads_thread_create' call error in 'search_in_directory' from '%s':%d\n", __FILE__, (__LINE__ - 2));
+                    fprintf(stderr, "'dthread_create' call error in 'search_in_directory' from '%s':%d\n", __FILE__, (__LINE__ - 2));
                 }
 
                 ++thread_count;
