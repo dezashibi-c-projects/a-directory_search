@@ -77,18 +77,18 @@ int dthread_equal(DThread* thread1, DThread* thread2)
     return pthread_equal(thread1->handle, thread2->handle);
 }
 
-_DThreadHandle dthread_self(void)
+uintptr_t dthread_self(void)
 {
     dthread_debug("dthread_self");
 
-    return pthread_self();
+    return (uintptr_t)pthread_self();
 }
 
-dthread_ulong_t dthread_id(DThread* thread)
+uintptr_t dthread_id(DThread* thread)
 {
     dthread_debug("dthread_id");
 
-    return (dthread_ulong_t)thread->handle;
+    return (uintptr_t)thread->handle;
 }
 
 void dthread_exit(void* code)
@@ -315,7 +315,7 @@ void dthread_barrier_destroy(DThreadBarrier* barrier)
 #endif
 }
 
-int dthread_semaphore_init(DThreadSemaphore* semaphore, dthread_uint_t initial_value)
+int dthread_semaphore_init(DThreadSemaphore* semaphore, uint32_t initial_value)
 {
     dthread_debug("dthread_semaphore_init");
 

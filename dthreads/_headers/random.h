@@ -81,6 +81,6 @@ DTHREAD_API int dthread_rng_random(void);
  *
  * Usage of this macro should be done in each thread before calling dthread_rng_random().
  */
-#define dthread_rng_seed_maker() srand((dthread_uint_t)(((dthread_ulong_t)time(NULL)) ^ ((uintptr_t)dthread_self())))
+#define dthread_rng_seed_maker() srand((uint32_t)(((uintptr_t)time(NULL)) ^ ((uintptr_t)dthread_self())))
 
 #endif // DTHREAD_RANDOM_H_

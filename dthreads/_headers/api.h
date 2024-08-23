@@ -23,54 +23,6 @@
 #include <limits.h>
 #include <stdint.h>
 
-#if UINT_MAX == 0xFFFFFFFFU
-typedef uint32_t dthread_uint_t;
-#elif UINT_MAX == 0xFFFFU
-typedef uint16_t dthread_uint_t;
-#elif UINT_MAX == 0xFFFFFFFFFFFFFFFFU
-typedef uint64_t dthread_uint_t;
-#else
-#error "Unsupported platform for unsigned int"
-#endif
-
-#if INT_MAX == 0x7FFFFFFF
-typedef int32_t dthread_int_t;
-#elif INT_MAX == 0x7FFF
-typedef int16_t dthread_int_t;
-#elif INT_MAX == 0x7FFFFFFFFFFFFFFF
-typedef int64_t dthread_int_t;
-#else
-#error "Unsupported platform for int"
-#endif
-
-#if ULONG_MAX == 0xFFFFFFFFUL
-typedef uint32_t dthread_ulong_t;
-#elif ULONG_MAX == 0xFFFFFFFFFFFFFFFFUL
-typedef uint64_t dthread_ulong_t;
-#else
-#error "Unsupported platform for unsigned long"
-#endif
-
-#if LONG_MAX == 0x7FFFFFFF
-typedef int32_t dthread_long_t;
-#elif LONG_MAX == 0x7FFFFFFFFFFFFFFF
-typedef int64_t dthread_long_t;
-#else
-#error "Unsupported platform for long"
-#endif
-
-#if ULLONG_MAX == 0xFFFFFFFFFFFFFFFFULL
-typedef uint64_t dthread_ullong_t;
-#else
-#error "Unsupported platform for unsigned long long"
-#endif
-
-#if LLONG_MAX == 0x7FFFFFFFFFFFFFFFLL
-typedef int64_t dthread_llong_t;
-#else
-#error "Unsupported platform for long long"
-#endif
-
 #ifdef _MSC_VER // MSVC
 #define DTHREAD_API_EXPORT __declspec(dllexport)
 #define DTHREAD_API_IMPORT __declspec(dllimport)
